@@ -1,0 +1,31 @@
+plugins {
+    id 'groovy'
+    //Necessary fro distZip and distTar
+    id 'application'
+}
+
+mainClassName = 'org.crashstar.groovy.HelloWorld'
+
+dependencies {
+
+    implementation project(':java-module')
+
+    implementation 'org.codehaus.groovy:groovy'
+
+    testImplementation testLibs.junit
+    testImplementation 'org.spockframework:spock-core', {
+        exclude module: 'groovy-all'
+        exclude module: 'junit'
+    }
+}
+
+distZip {
+    from project(':docs').asciidoctor, {
+        into "${project.name}-${version}"
+    }
+}
+distTar {
+    from project(':docs').asciidoctor, {
+        into "${project.name}-${version}"
+    }
+}

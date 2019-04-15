@@ -1,0 +1,27 @@
+plugins {
+    id 'groovy'        
+    id 'application' 
+}
+
+mainClassName = 'org.crashstar.java.Greeter'
+
+dependencies {
+    
+    testImplementation testLibs.junit
+    testImplementation 'org.spockframework:spock-core', {
+        exclude module: 'groovy-all'
+        exclude module: 'junit'
+    } 
+}
+
+
+distZip {
+    from project(':docs').asciidoctor, { 
+        into "${project.name}-${version}"
+    }
+}
+distTar {
+    from project(':docs').asciidoctor, {
+        into "${project.name}-${version}"
+    }
+}

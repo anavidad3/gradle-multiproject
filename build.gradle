@@ -1,0 +1,80 @@
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.6' apply false
+}
+
+ext {
+    junitVersion = '4.12'
+    scalaBinary = '2.12'
+    scalaTestVerison = '3.0.5'
+    logbackVersion = '1.2.3'
+    groovyVersion = '2.4.10'
+    scalaVersion = '2.12.8'
+    spockVersion = '1.0-groovy-2.4'
+    scalaXmlVersion = '1.1.1'
+    akkaActorVersion = '2.5.11'
+    akkaTestKitVersion = '2.5.11'
+}
+
+
+ext.testLibs = [
+        'junit' : "junit:junit:${junitVersion}",
+        'scalatest' : "org.scalatest:scalatest_${scalaBinary}:${scalaTestVerison}",
+        'spock' : "org.spockframework:spock-core:${spockVersion}",
+        'akka_testkit' : "com.typesafe.akka:akka-testkit_${scalaBinary}:${akkaTestKitVersion}"
+]
+
+ext.logLibs = [
+        'logback' : "ch.qos.logback:logback-classic:${logbackVersion}"
+]
+
+ext.libs = [
+        'groovy' : "org.codehaus.groovy:groovy:${groovyVersion}",
+        'scala' : "org.scala-lang:scala-library:${scalaVersion}",
+        'scala_xml' : "org.scala-lang.modules:scala-xml_${scalaBinary}:${scalaXmlVersion}",
+        'akka_actor' : "com.typesafe.akka:akka-actor_${scalaBinary}:${akkaActorVersion}"
+]
+
+allprojects {
+
+    repositories {
+        //jcenter()
+        mavenCentral()
+    }
+
+    plugins.withType(JavaPlugin).whenPluginAdded {
+        dependencies {
+            constraints {
+
+                implementation libs.groovy
+                implementation libs.scala
+                implementation libs.akka_actor
+
+
+                // Need scala-xml at test runtime
+                testRuntimeOnly libs.scala_xml
+
+                implementation logLibs.logback
+
+                testImplementation testLibs.junit
+                testImplementation testLibs.spock
+                testImplementation testLibs.scalatest
+                testImplementation testLibs.akka_testkit
+
+            }
+        }
+
+        test {
+            testLogging {
+                // set options for log level LIFECYCLE
+                events "PASSED", "STARTED", "FAILED", "SKIPPED"
+            }
+        }
+    }
+}
+
+
+
+subprojects {
+    version = '1.0'
+}
+
